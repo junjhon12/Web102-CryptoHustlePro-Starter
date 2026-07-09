@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom"; 
+import CoinChart from "./CoinChart";
 
 const API_KEY = import.meta.env.VITE_APP_API_KEY;
 
@@ -76,6 +77,11 @@ const CoinDetail = () => {
           </tbody>
         </table>
       </div>
+
+      <CoinChart
+        symbol={symbol}
+        market={fullDetails.MARKET}
+      />
     </div>
   );
 };
