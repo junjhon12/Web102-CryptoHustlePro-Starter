@@ -10,19 +10,33 @@ function App() {
   const [searchInput, setSearchInput] = useState("")
  
   useEffect(() => {
+    const controller = new AbortController();
+
     const fetchAllCoinData = async () => {
-      const response = await fetch(
-        "https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=100&page=1",
-        {
-          headers: {
-            "x-cg-demo-api-key": API_KEY,
-          },
+      try {
+        const response = await fetch(
+          "https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=100&page=1",
+          {
+            headers: {
+              "x-cg-demo-api-key": API_KEY,
+            },
+            signal: controller.signal 
+          }
+        )
+        const json = await response.json()
+        setList(json)
+      } catch (error) {
+        if (error.name === "AbortError") {
+          console.log("Fetch aborted because user navigated away");
+        } else {
+          console.error(error);
         }
-      )
-      const json = await response.json()
-      setList(json)
+      }
     }
-    fetchAllCoinData().catch(console.error)
+    
+    fetchAllCoinData();
+
+    return () => controller.abort();
   }, [])
  
   const searchItems = searchValue => {
