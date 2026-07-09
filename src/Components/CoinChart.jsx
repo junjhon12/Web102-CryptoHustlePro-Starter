@@ -19,7 +19,7 @@ const CoinChart = ({ symbol, market }) => {
     const getCoinHist = async () => {
       try {
         const response = await fetch(
-          `https://min-api.cryptocompare.com/data/v2/histoday?fsym=${symbol}&tsym=USD&limit=30&api_key=${API_KEY}`
+          `https://min-api.cryptocompare.com/data/v2/histoday?fsym=${symbol}&tsym=USD&e=${market}&limit=30&api_key=${API_KEY}`
         );
         const json = await response.json();
         
@@ -31,23 +31,22 @@ const CoinChart = ({ symbol, market }) => {
       }
     };
 
-    getCoinHist();
+    if (market) {
+        getCoinHist();
+    }
   }, [symbol, market]);
 
   const cleanData = (data) => {
     let filteredData = [];
-    let countDays = 0;
     for (const item of data) {
-      let accurateDay = new Date();
-      accurateDay.setDate(accurateDay.getDate() - countDays);
+      let accurateDay = new Date(item.time * 1000);
 
       filteredData.push({
         time: accurateDay.toLocaleDateString("en-US"),
         "open price": item.open,
       });
-      countDays++;
     }
-    return filteredData.reverse();
+    return filteredData; 
   };
 
   return (
@@ -55,13 +54,13 @@ const CoinChart = ({ symbol, market }) => {
       {histData ? (
         <div className="h-100 w-full bg-[#1a1a1a] p-6 rounded-xl shadow-lg">
           <h2 className="text-2xl font-bold mb-4 text-center">30-Day Price History</h2>
-          <ResponsiveContainer width="100%" height="100%">
+          <ResponsiveContainer width="100%" height={400}>
             <LineChart
               data={histData}
               margin={{ top: 10, right: 30, left: 20, bottom: 30 }}
             >
               <CartesianGrid strokeDasharray="3 3" stroke="#444" />
-              <XAxis dataKey="time" stroke="#888">
+              <XAxis dataKey="time" stroke="#888" interval={4} angle={20} dy={10}>
                 <Label value="Date" offset={-20} position="insideBottom" fill="#ccc" />
               </XAxis>
               <YAxis stroke="#888" domain={['auto', 'auto']}>

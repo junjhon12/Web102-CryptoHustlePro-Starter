@@ -42,11 +42,13 @@ function App() {
   const searchItems = searchValue => {
     setSearchInput(searchValue)
     if (searchValue !== "") {
-      const filteredData = list.filter(coin =>
-        coin.name.toLowerCase().includes(searchValue.toLowerCase()) ||
-        coin.symbol.toLowerCase().includes(searchValue.toLowerCase())
-      )
-      setFilteredResults(filteredData)
+      if (list) {
+        const filteredData = list.filter(coin =>
+          coin.name.toLowerCase().includes(searchValue.toLowerCase()) ||
+          coin.symbol.toLowerCase().includes(searchValue.toLowerCase())
+        )
+        setFilteredResults(filteredData)
+      }
     } else {
       setFilteredResults(list)
     }
